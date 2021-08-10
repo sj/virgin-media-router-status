@@ -3,6 +3,7 @@
 import json
 import os
 import csv
+from dateutil import parser
 
 datadir="data"
 outputfile=os.path.join(datadir, "summary.csv")
@@ -23,6 +24,7 @@ with open (outputfile, 'w') as csvfile:
     for jsonfile in jsonfiles:
         # Parse date from filename (e.g. virgin-media-router-status-2021-08-07T23:00+01:00.json)
         datetime_iso8601='-'.join(os.path.splitext(jsonfile)[0].split("-")[4:7])
+        datetime = parser.isoparse(datetime_iso8601)
 
         with open(os.path.join(datadir,jsonfile)) as f:
             print("Processing " + jsonfile + " (" + datetime_iso8601 + ")...")
@@ -53,6 +55,6 @@ with open (outputfile, 'w') as csvfile:
 
             avg_dbmv = sum_dbmv / 24.0
             #csvwriter.writerow(['date and time', 'min dBmV', 'max dBmV', 'avg dBmV', 'Pre RS Errors (cuml, all channels)', 'Post RS Errors (cuml, all channels)'])
-            csvwriter.writerow([datetime_iso8601, min_dbmv, max_dbmv, f"{avg_dbmv:.2f}", sum_pre_rs_errors, sum_post_rs_errors])
+            csvwriter.writerow([datetime.strftime("%Y-%m-%d %H:%M:%S"), min_dbmv, max_dbmv, f"{avg_dbmv:.2f}", sum_pre_rs_errors, sum_post_rs_errors])
 
 
